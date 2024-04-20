@@ -98,7 +98,6 @@ int main() {
     sf::Music music;
     music.setLoop(true);
     sf::SoundBuffer buffer;
-    buffer.loadFromFile("songy/správná odpověď.ogg");
     sf::Sound sound;
     sound.setBuffer(buffer);
     // Intro WIP
@@ -113,6 +112,8 @@ int main() {
             music.openFromFile("songy/chcete být c++ářem otázka " + to_string(i + 1) + (string)".ogg");
             music.play();
         }
+        buffer.loadFromFile("songy/začátek otázky.ogg");
+        sound.play();
 
         cout <<  i + 1 << ". otázka:" << endl;
         this_thread::sleep_for(chrono::milliseconds(2000));
@@ -129,10 +130,11 @@ int main() {
             break;
         }
 
-        this_thread::sleep_for(chrono::milliseconds(1200));
+        buffer.loadFromFile("songy/správná odpověď.ogg");
+        this_thread::sleep_for(chrono::milliseconds(1500));
         cout << "Ano správně, je to tak!" << endl << endl;
         sound.play();
-        this_thread::sleep_for(chrono::milliseconds(1200));
+        this_thread::sleep_for(chrono::milliseconds(2000));
     }
 
     if (vyhra) {
