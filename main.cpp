@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <cctype>
+#include <SFML/Audio.hpp>
 
 using namespace std;
 const int POCET_OTAZEK = 15;
@@ -42,24 +43,24 @@ class Otazka {
 const string odpovedi[POCET_OTAZEK][POCET_ODPOVEDI] = {
     {"a) Napíše Hello, world!", "b) Čeká na input, poté napíše Hello, world!", "c) Je kompatibilní s C", "d) Hodí seg fault"},
     {"a) 012", "b) 122", "c) 013", "d) 112"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "d) Odpověď 3", "d) Odpověď 4"}
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"}
 };
 
 const Otazka listOtazek[POCET_OTAZEK] = {
     Otazka("Co je pravda o programu:\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    cout << \"Hello, world!\" << endl;\n}", odpovedi[0], 'a'),
-    Otazka("Co napíše tento program?\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    int i = 0;\n    cout << ++i << i++ << i << endl;" , odpovedi[1], 'd'),
+    Otazka("Co napíše tento program?\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    int i = 0;\n    cout << ++i << i++ << i << endl;\n}" , odpovedi[1], 'd'),
     Otazka("Test č. 3:", odpovedi[2], 'c'),
     Otazka("Test č. 4:", odpovedi[3], 'b'),
     Otazka("Test č. 5:", odpovedi[4], 'b'),
@@ -94,22 +95,50 @@ bool otazky(int index) {
 }
 
 int main() {
+    sf::Music music;
+    music.setLoop(true);
+    sf::SoundBuffer buffer;
+    buffer.loadFromFile("songy/správná odpověď.ogg");
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    // Intro WIP
+    // music.openFromFile("songy/chcete být c++ářem znělka.ogg"))
+
+    music.openFromFile("songy/chcete být c++ářem první otázky.ogg");
+    music.play();
+
     bool vyhra = true;
     for (int i = 0; i < POCET_OTAZEK; i++) {
+        if (i > 4) {
+            music.openFromFile("songy/chcete být c++ářem otázka " + to_string(i + 1) + (string)".ogg");
+            music.play();
+        }
+
+        cout <<  i + 1 << ". otázka:" << endl;
+        this_thread::sleep_for(chrono::milliseconds(2000));
         if (not otazky(i)) {
+            this_thread::sleep_for(chrono::milliseconds(1200));
+            music.openFromFile("songy/chcete být c++ářem prohra.ogg");
+            music.play();
+
             cout << "Je mi líto, ale toto byla špatná odpověď." << endl;
             this_thread::sleep_for(chrono::milliseconds(2000));
             cout << "Zabijí vás agenti KGB!" << endl;
-            this_thread::sleep_for(chrono::milliseconds(2000));
+            this_thread::sleep_for(chrono::milliseconds(5500));
             vyhra = false;
             break;
         }
-        cout << "Ano správně, je to tak!" << endl;
-        this_thread::sleep_for(chrono::milliseconds(1200));
 
+        this_thread::sleep_for(chrono::milliseconds(1200));
+        cout << "Ano správně, je to tak!" << endl << endl;
+        sound.play();
+        this_thread::sleep_for(chrono::milliseconds(1200));
     }
+
     if (vyhra) {
+        music.openFromFile("songy/chcete být c++ářem výhra.ogg");
+        music.play();
         cout << "Právě jste vyhrál hru chcete být c++ářem, GRATULUJEME!!!" << endl;
-        this_thread::sleep_for(chrono::milliseconds(3000));
+        this_thread::sleep_for(chrono::milliseconds(23000));
     }
 }
