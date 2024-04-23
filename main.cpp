@@ -9,35 +9,35 @@ const int POCET_OTAZEK = 15;
 const int POCET_ODPOVEDI = 4;
 
 class Otazka {
-    private:
-        string otazka;
-        string odpovedi[POCET_ODPOVEDI];
-        //vector<string> odpovedi;
-        char spravnaOdpoved;
-    public:
-        Otazka(const string otazka, const string odpovedi[], const char spravnaOdpoved) {
-            this->otazka = otazka;
-            for (int i = 0; i < POCET_ODPOVEDI; i++)
-                this->odpovedi[i] = odpovedi[i];
-            //for (int i = 0; i < 4; i++)
-            //    this->odpovedi.push_back(odpovedi[i]);
-            this->spravnaOdpoved = spravnaOdpoved;
-        }
+private:
+    string otazka;
+    string odpovedi[POCET_ODPOVEDI];
+    //vector<string> odpovedi;
+    char spravnaOdpoved;
+public:
+    Otazka(const string otazka, const string odpovedi[], const char spravnaOdpoved) {
+        this->otazka = otazka;
+        for (int i = 0; i < POCET_ODPOVEDI; i++)
+            this->odpovedi[i] = odpovedi[i];
+        //for (int i = 0; i < 4; i++)
+        //    this->odpovedi.push_back(odpovedi[i]);
+        this->spravnaOdpoved = spravnaOdpoved;
+    }
 
-        string returnOtazka() {
-            return otazka;
-        }
+    string returnOtazka() {
+        return otazka;
+    }
 
-        char returnSpravnaOdpoved() {
-            return spravnaOdpoved;
-        }
+    char returnSpravnaOdpoved() {
+        return spravnaOdpoved;
+    }
 
-        void printOdpovedi() {
-            for (string odpoved : odpovedi) {
-                cout << odpoved << ((odpoved != odpovedi[POCET_ODPOVEDI - 1]) ? "\n" : ": ");
-                this_thread::sleep_for(chrono::milliseconds(100));
-            }
+    void printOdpovedi() {
+        for (string odpoved : odpovedi) {
+            cout << odpoved << ((odpoved != odpovedi[POCET_ODPOVEDI - 1]) ? "\n" : ": ");
+            this_thread::sleep_for(chrono::milliseconds(100));
         }
+    }
 };
 
 const string odpovedi[POCET_OTAZEK][POCET_ODPOVEDI] = {
