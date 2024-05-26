@@ -4,9 +4,10 @@
 #include <cctype>
 #include <SFML/Audio.hpp>
 
+#define POCET_OTAZEK 15
+#define POCET_ODPOVEDI 4
+
 using namespace std;
-const int POCET_OTAZEK = 15;
-const int POCET_ODPOVEDI = 4;
 
 class Otazka {
 private:
