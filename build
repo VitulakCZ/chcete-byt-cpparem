@@ -1,2 +1,2 @@
 g++ -c main.cpp
-g++ main.o -lsfml-audio
+g++ -o game main.o -lsfml-audio
