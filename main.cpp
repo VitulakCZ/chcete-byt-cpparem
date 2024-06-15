@@ -2,8 +2,9 @@
 #include <chrono>
 #include <thread>
 #include <cctype>
+#ifndef NO_SFML
 #include <SFML/Audio.hpp>
-
+#endif
 #define POCET_OTAZEK 15
 #define POCET_ODPOVEDI 4
 
