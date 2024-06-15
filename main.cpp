@@ -96,6 +96,7 @@ bool otazky(int index) {
 }
 
 int main() {
+    #ifndef NO_SFML
     sf::Music music;
     music.setLoop(true);
     sf::SoundBuffer buffer;
@@ -106,23 +107,26 @@ int main() {
 
     music.openFromFile("songy/chcete být c++ářem první otázky.ogg");
     music.play();
-
+    #endif
     bool vyhra = true;
     for (int i = 0; i < POCET_OTAZEK; i++) {
+        #ifndef NO_SFML
         if (i > 4) {
             music.openFromFile("songy/chcete být c++ářem otázka " + to_string(i + 1) + (string)".ogg");
             music.play();
         }
         buffer.loadFromFile("songy/začátek otázky.ogg");
         sound.play();
+        #endif
 
         cout <<  i + 1 << ". otázka:" << endl;
         this_thread::sleep_for(chrono::milliseconds(2000));
         if (not otazky(i)) {
             this_thread::sleep_for(chrono::milliseconds(1200));
+            #ifndef NO_SFML
             music.openFromFile("songy/chcete být c++ářem prohra.ogg");
             music.play();
-
+            #endif
             cout << "Je mi líto, ale toto byla špatná odpověď." << endl;
             this_thread::sleep_for(chrono::milliseconds(2000));
             cout << "Zabijí vás agenti KGB!" << endl;
@@ -131,16 +135,22 @@ int main() {
             break;
         }
 
+        #ifndef NO_SFML
         buffer.loadFromFile("songy/správná odpověď.ogg");
+        #endif
         this_thread::sleep_for(chrono::milliseconds(1500));
         cout << "Ano správně, je to tak!" << endl << endl;
+        #ifndef NO_SFML
         sound.play();
+        #endif
         this_thread::sleep_for(chrono::milliseconds(2000));
     }
 
     if (vyhra) {
+        #ifndef NO_SFML
         music.openFromFile("songy/chcete být c++ářem výhra.ogg");
         music.play();
+        #endif
         cout << "Právě jste vyhrál hru chcete být c++ářem, GRATULUJEME!!!" << endl;
         this_thread::sleep_for(chrono::milliseconds(23000));
     }
