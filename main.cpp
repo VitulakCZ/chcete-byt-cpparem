@@ -71,9 +71,9 @@ const Otazka listOtazek[POCET_OTAZEK] = {
     Otazka("Test č. 8:", odpovedi[7], 'c'),
     Otazka("Test č. 9:", odpovedi[8], 'c'),
     Otazka("Test č. 10:", odpovedi[9], 'a'),
-    Otazka("Test č. 11:", odpovedi[10], 'c'),
+    Otazka("Test č. 11:", odpovedi[10], 'a'),
     Otazka("Test č. 12:", odpovedi[11], 'b'),
-    Otazka("Test č. 13:", odpovedi[12], 'b'),
+    Otazka("Test č. 13:", odpovedi[12], 'c'),
     Otazka("Test č. 14:", odpovedi[13], 'b'),
     Otazka("Test č. 15:", odpovedi[14], 'd')
 };

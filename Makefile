@@ -1,10 +1,7 @@
 NO_SFML = 0
 ifeq ($(NO_SFML), 0)
-game: main.o
-	g++ -o game main.o -lsfml-audio
-	rm main.o
-main.o: main.cpp
-	g++ -c main.cpp
+game: main.cpp
+	g++ -o game main.cpp -lsfml-audio
 else
 game: main.cpp
 	g++ -o game main.cpp -DNO_SFML=1
