@@ -45,8 +45,8 @@ public:
 const string odpovedi[POCET_OTAZEK][POCET_ODPOVEDI] = {
     {"a) Napíše Hello, world!", "b) Čeká na input, poté napíše Hello, world!", "c) Je kompatibilní s C", "d) Hodí seg fault"},
     {"a) 012", "b) 122", "c) 013", "d) 112"},
-    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
-    {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
+    {"a) 8 4 2 1", "b) 64 32 16 8", "c) 40 20 10 5", "d) Hodí seg fault"},
+    {"a) 9", "b) 10", "c) 12", "d) 15"},
     {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
     {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
     {"a) Odpověď 1", "b) Odpověď 2", "c) Odpověď 3", "d) Odpověď 4"},
@@ -62,9 +62,9 @@ const string odpovedi[POCET_OTAZEK][POCET_ODPOVEDI] = {
 
 const Otazka listOtazek[POCET_OTAZEK] = {
     Otazka("Co je pravda o programu:\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    cout << \"Hello, world!\" << endl;\n}", odpovedi[0], 'a'),
-    Otazka("Co napíše tento program?\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    int i = 0;\n    cout << ++i << i++ << i << endl;\n}" , odpovedi[1], 'd'),
-    Otazka("Test č. 3:", odpovedi[2], 'c'),
-    Otazka("Test č. 4:", odpovedi[3], 'b'),
+    Otazka("Jaký je output tohoto programu?\n\n#include <iostream>\n\nusing namespace std;\nint main() {\n    int i = 0;\n    cout << ++i << i++ << i << endl;\n}" , odpovedi[1], 'd'),
+    Otazka("Jaký je output tohoto programu?\n\n#include <iostream>\n\nint main() {\n    size_t cisla_64bit[5];\n    int cisla_32bit[5];\n    short int cisla_16bit[5];\n    int8_t cisla_8bit[5];\n\n    std::cout << sizeof(cisla_64bit) << ' ' << sizeof(cisla_32bit) << ' ' << sizeof(cisla_16bit) << ' ' << sizeof(cisla_8bit) << '\\n';\n}", odpovedi[2], 'c'),
+    Otazka("Jaký je output tohoto programu převedený z binárního čísla na decimální?\n\n#include <iostream>\n\nusing namespace std;\nnamespace matika {\n    int pridat(int& cislo, int i) {\n        return ++cislo;\n    }\n\n    int odebrat(int& cislo, int i) {\n        return --cislo;\n    }\n}\nint main() {\n    int cislo = 0;\n    string cislo_str;\n    for (int i = 0; i < 4; i++) {\n        int (*funkce)(int&, int) = i % 2 == 0 ? matika::pridat : matika::odebrat;\n        cislo_str += to_string(funkce(cislo, i));\n    }\n    cout << cislo_str << '\\n';\n}", odpovedi[3], 'b'),
     Otazka("Test č. 5:", odpovedi[4], 'b'),
     Otazka("Test č. 6:", odpovedi[5], 'a'),
     Otazka("Test č. 7:", odpovedi[6], 'd'),
@@ -110,7 +110,7 @@ int main() {
     music.play();
     #endif
     bool vyhra = true;
-    for (int i = 0; i < POCET_OTAZEK; i++) {
+    for (int i = 3; i < POCET_OTAZEK; i++) {
         #ifndef NO_SFML
         if (i > 4) {
             music.openFromFile("songy/chcete být c++ářem otázka " + to_string(i + 1) + (string)".ogg");
