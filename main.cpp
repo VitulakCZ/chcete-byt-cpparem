@@ -110,7 +110,7 @@ int main() {
     music.play();
     #endif
     bool vyhra = true;
-    for (int i = 3; i < POCET_OTAZEK; i++) {
+    for (int i = 0; i < POCET_OTAZEK; i++) {
         #ifndef NO_SFML
         if (i > 4) {
             music.openFromFile("songy/chcete být c++ářem otázka " + to_string(i + 1) + (string)".ogg");
