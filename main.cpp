@@ -2,6 +2,8 @@
 #include <chrono>
 #include <thread>
 #include <cctype>
+#include <cstdlib>
+#include <ctime>
 #ifndef NO_SFML
 #include <SFML/Audio.hpp>
 #endif
@@ -9,6 +11,22 @@
 #define POCET_ODPOVEDI 4
 
 using namespace std;
+
+uint8_t listPadesatNaPadesat[2];
+uint8_t procentaPublika[4];
+struct UNap {
+    bool padesat_na_padesat = false;
+    bool publikum = false;
+    bool pritel_na_telefonu = false;
+} u_Nap;
+
+void divaci_hlasovani() {
+    cout << "Výsledky hlasování:\n";
+    for (int i = 0; i < 4; i++) {
+        if (procentaPublika[i] == 255) continue;
+        cout << char('a' + i) << ") " << to_string(procentaPublika[i]) << '\n';
+    }
+}
 
 class Otazka {
 private:
@@ -35,8 +53,20 @@ public:
     }
 
     void printOdpovedi() {
+        uint8_t pade_pade_count = 0;
         for (string odpoved : odpovedi) {
-            cout << odpoved << ((odpoved != odpovedi[POCET_ODPOVEDI - 1]) ? "\n" : ": ");
+            if (u_Nap.padesat_na_padesat) {
+                bool je_pade_pade = false;
+                for (char pade_pade : listPadesatNaPadesat) {
+                    if (pade_pade == odpoved[0] - 'a') {
+                        je_pade_pade = true;
+                        pade_pade_count++;
+                        break;
+                    }
+                }
+                if (!je_pade_pade) continue;
+            }
+            cout << odpoved << (((odpoved != odpovedi[POCET_ODPOVEDI - 1] && pade_pade_count < 1) || pade_pade_count == 1) ? "\n" : " (N = Nápovědy): ");
             this_thread::sleep_for(chrono::milliseconds(100));
         }
     }
@@ -78,8 +108,108 @@ const Otazka listOtazek[POCET_OTAZEK] = {
     Otazka("Test č. 15:", odpovedi[14], 'd')
 };
 
+enum class Napoveda {
+    nic,
+    padesat_na_padesat,
+    publikum,
+    pritel_na_telefonu,
+};
+
+struct Nap {
+    bool padesat_na_padesat = true;
+    bool publikum = true;
+    bool pritel_na_telefonu = true;
+} s_Nap;
+
+Napoveda vyber_napoved() {
+    cout << "\nMožné nápovědy:\n";
+    char pismeno = 'a';
+    char pnp = '-';
+    char pub = '-';
+    char tel = '-';
+    if (!s_Nap.padesat_na_padesat && !s_Nap.publikum && !s_Nap.pritel_na_telefonu) cout << "Žádné nápovědy nejsou k dispozici";
+    if (s_Nap.padesat_na_padesat) {
+        cout << pismeno << ") 50:50";
+        if (s_Nap.publikum || s_Nap.pritel_na_telefonu)
+            cout << '\n';
+        pnp = 'a';
+        pismeno++;
+    }
+    if (s_Nap.publikum) {
+        cout << pismeno << ") Hlasování publika";
+        if (s_Nap.pritel_na_telefonu)
+            cout << '\n';
+        if (s_Nap.padesat_na_padesat) pub = 'b';
+        else pub = 'a';
+        pismeno++;
+    }
+    if (s_Nap.pritel_na_telefonu) {
+        cout << pismeno << ") Přítel na telefonu";
+        if (s_Nap.padesat_na_padesat) {
+            if (s_Nap.publikum)
+                tel = 'c';
+            else
+                tel = 'b';
+        }
+        else if (s_Nap.publikum)
+            tel = 'b';
+        else
+            tel = 'a';
+        pismeno++;
+    }
+    cout << ": ";
+    string user_napoveda;
+    cin >> user_napoveda;
+    const char chr_user_napoveda = tolower(user_napoveda[0]);
+    if (user_napoveda.size() > 1 || chr_user_napoveda == '-')
+        return Napoveda::nic;
+    if (chr_user_napoveda == pnp)
+        return Napoveda::padesat_na_padesat;
+    if (chr_user_napoveda == pub)
+        return Napoveda::publikum;
+    if (chr_user_napoveda == tel)
+        return Napoveda::pritel_na_telefonu;
+    return Napoveda::nic;
+}
+
+void fce_napoved(Napoveda napoveda, const char spravnaOdpoved) {
+    if (napoveda == Napoveda::padesat_na_padesat) {
+        u_Nap.padesat_na_padesat = true;
+        listPadesatNaPadesat[0] = spravnaOdpoved - 'a';
+        do {
+            listPadesatNaPadesat[1] = rand() % 4;
+        } while (listPadesatNaPadesat[0] == listPadesatNaPadesat[1]);
+    }
+    if (napoveda == Napoveda::publikum) {
+        u_Nap.publikum = true;
+        for (int i = 0; i < 4; i++)
+            procentaPublika[i] = 255;
+        if (u_Nap.padesat_na_padesat) {
+            int cislo1 = rand() % 51;
+            int cislo2 = 100 - cislo1;
+            procentaPublika[listPadesatNaPadesat[0]] = cislo1;
+            procentaPublika[listPadesatNaPadesat[1]] = cislo2;
+        } else {
+            int cislo1 = rand() % 26;
+            int cislo2 = rand() % 26;
+            int cislo3 = rand() % 26;
+            int cislo4 = 100 - (cislo1+cislo2+cislo3);
+            procentaPublika[0] = cislo1;
+            procentaPublika[1] = cislo2;
+            procentaPublika[2] = cislo3;
+            procentaPublika[3] = cislo4;
+        }
+        cout << "Diváci v sále hlasují, počkejte prosím..." << endl;
+        this_thread::sleep_for(chrono::milliseconds(8000));
+    }
+    if (napoveda == Napoveda::pritel_na_telefonu)
+        u_Nap.pritel_na_telefonu = true;
+}
+
 bool otazky(int index) {
     auto otazka = listOtazek[index];
+    if (u_Nap.publikum)
+        divaci_hlasovani();
     cout << otazka.returnOtazka() << endl << endl;
     this_thread::sleep_for(chrono::milliseconds(2000));
 
@@ -88,15 +218,40 @@ bool otazky(int index) {
     cin >> user_odpoved;
     const char chr_user_odpoved = tolower(user_odpoved[0]);
 
-    if (user_odpoved.size() > 1 || chr_user_odpoved != 'a' && chr_user_odpoved != 'b' && chr_user_odpoved != 'c' && chr_user_odpoved != 'd') {
+    if (user_odpoved.size() > 1 || chr_user_odpoved != 'a' && chr_user_odpoved != 'b' && chr_user_odpoved != 'c' && chr_user_odpoved != 'd' && chr_user_odpoved != 'n') {
         cout << "Špatné zadání!" << endl;
         return otazky(index);
     }
+    if (chr_user_odpoved == 'n') {
+        Napoveda napoveda = vyber_napoved();
+        if (napoveda == Napoveda::nic) {
+            cout << "Špatné zadání!" << endl;
+            return otazky(index);
+        }
+        if (napoveda == Napoveda::padesat_na_padesat) {
+            cout << "Padesát na padesát!"<< endl;
+            s_Nap.padesat_na_padesat = false;
+        }
+        if (napoveda == Napoveda::publikum) {
+            cout << "Hlasování publika!" << endl;
+            s_Nap.publikum = false;
+        }
+        if (napoveda == Napoveda::pritel_na_telefonu) {
+            cout << "Přítel na telefonu!" << endl;
+            s_Nap.pritel_na_telefonu = false;
+        }
+        fce_napoved(napoveda, otazka.returnSpravnaOdpoved());
+        return otazky(index);
+    }
+    u_Nap.padesat_na_padesat = false;
+    u_Nap.publikum = false;
+    u_Nap.pritel_na_telefonu = false;
 
     return chr_user_odpoved == otazka.returnSpravnaOdpoved();
 }
 
 int main() {
+    srand(time(0));
     #ifndef NO_SFML
     sf::Music music;
     music.setLoop(true);
